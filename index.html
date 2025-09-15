@@ -3,7 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Org Chart Builder</title>
+    <title>Org Chart Builder - Beautiful Team Visualization</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -11,76 +14,217 @@
             box-sizing: border-box;
         }
 
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --primary-light: #818cf8;
+            --secondary: #10b981;
+            --secondary-dark: #059669;
+            --danger: #ef4444;
+            --danger-dark: #dc2626;
+            --warning: #f59e0b;
+            --bg-gradient-start: #0f172a;
+            --bg-gradient-end: #1e293b;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --text-light: #94a3b8;
+            --border-color: #e2e8f0;
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+            --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1);
+        }
+
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%);
             min-height: 100vh;
             padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(99, 102, 241, 0.1) 0%, transparent 70%);
+            animation: float 20s ease-in-out infinite;
+            pointer-events: none;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            33% { transform: translate(-100px, -100px) rotate(120deg); }
+            66% { transform: translate(100px, -50px) rotate(240deg); }
         }
 
         .container {
-            max-width: 1400px;
+            max-width: 1600px;
             margin: 0 auto;
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            background: rgba(255, 255, 255, 0.98);
+            border-radius: 24px;
+            box-shadow: var(--shadow-xl), 0 0 80px rgba(99, 102, 241, 0.15);
             overflow: hidden;
+            backdrop-filter: blur(10px);
+            position: relative;
         }
 
         .header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
             color: white;
-            padding: 30px;
+            padding: 40px;
             text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+            animation: rotate 30s linear infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 1;
+            letter-spacing: -0.02em;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.95;
+            position: relative;
+            z-index: 1;
         }
 
         .controls {
-            padding: 20px;
-            background: #f7f9fc;
-            border-bottom: 2px solid #e2e8f0;
+            padding: 24px 32px;
+            background: linear-gradient(to bottom, #f8fafc, #f1f5f9);
+            border-bottom: 1px solid var(--border-color);
             display: flex;
-            gap: 10px;
+            gap: 12px;
             flex-wrap: wrap;
             align-items: center;
         }
 
         button {
-            background: #667eea;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 8px;
+            background: white;
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+            padding: 10px 18px;
+            border-radius: 10px;
             cursor: pointer;
             font-size: 14px;
-            transition: all 0.3s;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        button::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(99, 102, 241, 0.1);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        button:hover::before {
+            width: 100px;
+            height: 100px;
         }
 
         button:hover {
-            background: #5a67d8;
             transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+            border-color: var(--primary-light);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        button.primary {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            border: none;
+        }
+
+        button.primary:hover {
+            box-shadow: var(--shadow-lg), 0 0 20px rgba(99, 102, 241, 0.3);
         }
 
         button.secondary {
-            background: #48bb78;
+            background: linear-gradient(135deg, var(--secondary) 0%, var(--secondary-dark) 100%);
+            color: white;
+            border: none;
         }
 
         button.secondary:hover {
-            background: #38a169;
+            box-shadow: var(--shadow-lg), 0 0 20px rgba(16, 185, 129, 0.3);
         }
 
         button.danger {
-            background: #f56565;
+            background: linear-gradient(135deg, var(--danger) 0%, var(--danger-dark) 100%);
+            color: white;
+            border: none;
         }
 
         button.danger:hover {
-            background: #e53e3e;
+            box-shadow: var(--shadow-lg), 0 0 20px rgba(239, 68, 68, 0.3);
+        }
+
+        button.warning {
+            background: linear-gradient(135deg, var(--warning) 0%, #ea580c 100%);
+            color: white;
+            border: none;
         }
 
         .chart-container {
-            padding: 40px;
+            padding: 48px;
             overflow: auto;
-            min-height: 500px;
-            background: white;
+            min-height: 600px;
+            background: linear-gradient(to bottom, white, #fafafa);
+            position: relative;
+        }
+
+        .chart-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image:
+                radial-gradient(circle at 20% 50%, rgba(99, 102, 241, 0.03) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(16, 185, 129, 0.03) 0%, transparent 50%),
+                radial-gradient(circle at 40% 20%, rgba(239, 68, 68, 0.03) 0%, transparent 50%);
+            pointer-events: none;
         }
 
         .org-chart {
@@ -88,7 +232,9 @@
             justify-content: center;
             align-items: flex-start;
             min-width: fit-content;
-            padding: 20px;
+            padding: 40px;
+            position: relative;
+            z-index: 1;
         }
 
         .node {
@@ -96,110 +242,209 @@
             flex-direction: column;
             align-items: center;
             position: relative;
+            animation: fadeInUp 0.5s ease;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .node-content {
             background: white;
-            border: 2px solid #667eea;
-            border-radius: 10px;
-            padding: 15px 20px;
-            min-width: 150px;
+            border: 2px solid var(--border-color);
+            border-radius: 16px;
+            padding: 20px 28px;
+            min-width: 180px;
             text-align: center;
             cursor: pointer;
-            transition: all 0.3s;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: var(--shadow-md);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .node-content::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--primary-light));
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .node-content:hover::before {
+            transform: scaleX(1);
         }
 
         .node-content:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
-            border-color: #5a67d8;
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: var(--shadow-xl), 0 0 30px rgba(99, 102, 241, 0.15);
+            border-color: var(--primary-light);
         }
 
         .node-content.selected {
-            background: #667eea;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
             color: white;
+            border-color: var(--primary-dark);
+            transform: scale(1.05);
+        }
+
+        .node-content.selected::before {
+            background: white;
+            transform: scaleX(1);
+        }
+
+        .node-avatar {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, var(--primary-light), var(--primary));
+            border-radius: 50%;
+            margin: 0 auto 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            color: white;
+            font-size: 18px;
+        }
+
+        .node-content.selected .node-avatar {
+            background: white;
+            color: var(--primary);
         }
 
         .node-title {
             font-weight: 600;
             font-size: 16px;
-            margin-bottom: 5px;
+            margin-bottom: 4px;
+            color: var(--text-primary);
+        }
+
+        .node-content.selected .node-title {
+            color: white;
         }
 
         .node-role {
-            font-size: 14px;
-            color: #718096;
+            font-size: 13px;
+            color: var(--text-secondary);
+            font-weight: 400;
         }
 
         .node-content.selected .node-role {
-            color: #e2e8f0;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .node-stats {
+            display: flex;
+            gap: 16px;
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid var(--border-color);
+            font-size: 12px;
+        }
+
+        .node-content.selected .node-stats {
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .stat {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .stat-value {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .node-content.selected .stat-value {
+            color: white;
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            margin-top: 2px;
+        }
+
+        .node-content.selected .stat-label {
+            color: rgba(255, 255, 255, 0.8);
         }
 
         .children {
             display: flex;
-            margin-top: 40px;
+            margin-top: 60px;
             position: relative;
         }
 
         .children::before {
             content: '';
             position: absolute;
-            top: -20px;
+            top: -30px;
             left: 50%;
             transform: translateX(-50%);
             width: 2px;
-            height: 20px;
-            background: #cbd5e0;
+            height: 30px;
+            background: linear-gradient(to bottom, var(--border-color), transparent);
         }
 
         .child-wrapper {
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding: 0 20px;
+            padding: 0 30px;
             position: relative;
         }
 
         .child-wrapper::before {
             content: '';
             position: absolute;
-            top: -20px;
+            top: -30px;
             left: 50%;
             transform: translateX(-50%);
             width: 2px;
-            height: 20px;
-            background: #cbd5e0;
+            height: 30px;
+            background: var(--border-color);
         }
 
         .children::after {
             content: '';
             position: absolute;
-            top: -20px;
+            top: -30px;
             left: 0;
             right: 0;
             height: 2px;
-            background: #cbd5e0;
+            background: var(--border-color);
         }
 
         .child-wrapper:first-child::after {
             content: '';
             position: absolute;
-            top: -20px;
+            top: -30px;
             left: 50%;
             right: 0;
             height: 2px;
-            background: #cbd5e0;
+            background: var(--border-color);
         }
 
         .child-wrapper:last-child::after {
             content: '';
             position: absolute;
-            top: -20px;
+            top: -30px;
             left: 0;
             right: 50%;
             height: 2px;
-            background: #cbd5e0;
+            background: var(--border-color);
         }
 
         .child-wrapper:only-child::after {
@@ -213,10 +458,17 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.5);
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(4px);
             justify-content: center;
             align-items: center;
             z-index: 1000;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
 
         .modal.active {
@@ -225,77 +477,175 @@
 
         .modal-content {
             background: white;
-            padding: 30px;
-            border-radius: 15px;
+            padding: 32px;
+            border-radius: 20px;
             width: 90%;
-            max-width: 400px;
+            max-width: 480px;
+            box-shadow: var(--shadow-xl);
+            animation: slideUp 0.3s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .modal h3 {
-            margin-bottom: 20px;
-            color: #2d3748;
+            margin-bottom: 24px;
+            color: var(--text-primary);
+            font-size: 1.5rem;
+            font-weight: 600;
         }
 
         .form-group {
-            margin-bottom: 15px;
+            margin-bottom: 20px;
         }
 
         label {
             display: block;
-            margin-bottom: 5px;
-            color: #4a5568;
+            margin-bottom: 8px;
+            color: var(--text-primary);
             font-size: 14px;
+            font-weight: 500;
         }
 
         input {
             width: 100%;
-            padding: 10px;
-            border: 2px solid #e2e8f0;
-            border-radius: 8px;
-            font-size: 14px;
-            transition: border-color 0.3s;
+            padding: 12px 16px;
+            border: 2px solid var(--border-color);
+            border-radius: 10px;
+            font-size: 15px;
+            transition: all 0.3s ease;
+            font-family: 'Inter', sans-serif;
         }
 
         input:focus {
             outline: none;
-            border-color: #667eea;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
         }
 
         .modal-buttons {
             display: flex;
-            gap: 10px;
-            margin-top: 20px;
+            gap: 12px;
+            margin-top: 28px;
             justify-content: flex-end;
         }
 
         .empty-state {
             text-align: center;
-            padding: 60px 20px;
-            color: #718096;
+            padding: 80px 20px;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .empty-state-icon {
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 24px;
+            background: linear-gradient(135deg, var(--primary-light), var(--primary));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            color: white;
         }
 
         .empty-state h2 {
-            color: #4a5568;
-            margin-bottom: 10px;
+            color: var(--text-primary);
+            margin-bottom: 12px;
+            font-size: 1.8rem;
+        }
+
+        .empty-state p {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8rem;
+            }
+
+            .controls {
+                padding: 16px;
+            }
+
+            button {
+                font-size: 13px;
+                padding: 8px 14px;
+            }
+
+            .chart-container {
+                padding: 20px;
+            }
+
+            .node-content {
+                min-width: 140px;
+                padding: 16px 20px;
+            }
+
+            .child-wrapper {
+                padding: 0 15px;
+            }
+        }
+
+        .tooltip {
+            position: absolute;
+            background: var(--text-primary);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            pointer-events: none;
+            z-index: 100;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .tooltip.visible {
+            opacity: 1;
         }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1>Organization Chart Builder</h1>
-            <p>Create and manage your team structure</p>
+            <h1>✨ Organization Chart Builder</h1>
+            <p>Create beautiful, interactive team structures</p>
         </div>
 
         <div class="controls">
-            <button onclick="addRootNode()">Add CEO/Root</button>
-            <button class="secondary" onclick="addChildNode()">Add Team Member</button>
-            <button onclick="editNode()">Edit Selected</button>
-            <button class="danger" onclick="deleteNode()">Delete Selected</button>
-            <button onclick="clearAll()">Clear All</button>
-            <button onclick="loadSample()">Load Sample</button>
-            <button onclick="exportData()">Export JSON</button>
-            <button onclick="document.getElementById('importFile').click()">Import JSON</button>
+            <button class="primary" onclick="addRootNode()">
+                <span>👤</span> Add CEO/Root
+            </button>
+            <button class="secondary" onclick="addChildNode()">
+                <span>➕</span> Add Team Member
+            </button>
+            <button onclick="editNode()">
+                <span>✏️</span> Edit Selected
+            </button>
+            <button class="danger" onclick="deleteNode()">
+                <span>🗑️</span> Delete Selected
+            </button>
+            <button class="warning" onclick="clearAll()">
+                <span>🔄</span> Clear All
+            </button>
+            <button onclick="loadSample()">
+                <span>📊</span> Load Sample
+            </button>
+            <button onclick="exportData()">
+                <span>💾</span> Export JSON
+            </button>
+            <button onclick="document.getElementById('importFile').click()">
+                <span>📁</span> Import JSON
+            </button>
             <input type="file" id="importFile" style="display: none;" accept=".json" onchange="importData(event)">
         </div>
 
@@ -308,16 +658,24 @@
         <div class="modal-content">
             <h3 id="modalTitle">Add Node</h3>
             <div class="form-group">
-                <label for="nodeName">Name:</label>
-                <input type="text" id="nodeName" placeholder="John Doe">
+                <label for="nodeName">Name</label>
+                <input type="text" id="nodeName" placeholder="Enter full name">
             </div>
             <div class="form-group">
-                <label for="nodeRole">Role/Title:</label>
-                <input type="text" id="nodeRole" placeholder="Manager">
+                <label for="nodeRole">Role/Title</label>
+                <input type="text" id="nodeRole" placeholder="Enter job title">
+            </div>
+            <div class="form-group">
+                <label for="nodeDepartment">Department (Optional)</label>
+                <input type="text" id="nodeDepartment" placeholder="Enter department">
+            </div>
+            <div class="form-group">
+                <label for="nodeEmail">Email (Optional)</label>
+                <input type="email" id="nodeEmail" placeholder="Enter email address">
             </div>
             <div class="modal-buttons">
                 <button onclick="closeModal()">Cancel</button>
-                <button class="secondary" onclick="saveNode()">Save</button>
+                <button class="primary" onclick="saveNode()">Save</button>
             </div>
         </div>
     </div>
@@ -360,6 +718,15 @@
             return 'node_' + nodeIdCounter++;
         }
 
+        function getInitials(name) {
+            return name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
+        }
+
+        function countChildren(node) {
+            if (!node.children || node.children.length === 0) return 0;
+            return node.children.reduce((acc, child) => acc + 1 + countChildren(child), 0);
+        }
+
         function createNodeElement(data) {
             const nodeDiv = document.createElement('div');
             nodeDiv.className = 'node';
@@ -369,6 +736,10 @@
             content.className = 'node-content';
             content.onclick = () => selectNode(data.id);
 
+            const avatar = document.createElement('div');
+            avatar.className = 'node-avatar';
+            avatar.textContent = getInitials(data.name);
+
             const title = document.createElement('div');
             title.className = 'node-title';
             title.textContent = data.name;
@@ -377,8 +748,50 @@
             role.className = 'node-role';
             role.textContent = data.role;
 
+            content.appendChild(avatar);
             content.appendChild(title);
             content.appendChild(role);
+
+            // Add department if exists
+            if (data.department) {
+                const dept = document.createElement('div');
+                dept.className = 'node-role';
+                dept.style.marginTop = '4px';
+                dept.style.fontSize = '12px';
+                dept.textContent = data.department;
+                content.appendChild(dept);
+            }
+
+            // Add stats
+            const stats = document.createElement('div');
+            stats.className = 'node-stats';
+
+            const teamStat = document.createElement('div');
+            teamStat.className = 'stat';
+            const teamValue = document.createElement('div');
+            teamValue.className = 'stat-value';
+            teamValue.textContent = countChildren(data);
+            const teamLabel = document.createElement('div');
+            teamLabel.className = 'stat-label';
+            teamLabel.textContent = 'Team';
+            teamStat.appendChild(teamValue);
+            teamStat.appendChild(teamLabel);
+
+            const levelStat = document.createElement('div');
+            levelStat.className = 'stat';
+            const levelValue = document.createElement('div');
+            levelValue.className = 'stat-value';
+            levelValue.textContent = data.children ? data.children.length : 0;
+            const levelLabel = document.createElement('div');
+            levelLabel.className = 'stat-label';
+            levelLabel.textContent = 'Direct';
+            levelStat.appendChild(levelValue);
+            levelStat.appendChild(levelLabel);
+
+            stats.appendChild(teamStat);
+            stats.appendChild(levelStat);
+            content.appendChild(stats);
+
             nodeDiv.appendChild(content);
 
             if (data.children && data.children.length > 0) {
@@ -405,8 +818,9 @@
             if (!orgData) {
                 chartArea.innerHTML = `
                     <div class="empty-state">
-                        <h2>No Organization Chart</h2>
-                        <p>Click "Add CEO/Root" to start building your org chart</p>
+                        <div class="empty-state-icon">📊</div>
+                        <h2>Start Building Your Team</h2>
+                        <p>Click "Add CEO/Root" to begin creating your organization chart</p>
                     </div>
                 `;
                 return;
@@ -425,7 +839,6 @@
         function selectNode(nodeId) {
             selectedNode = nodeId;
             renderChart();
-            saveToStorage();
         }
 
         function findNode(nodeId, currentNode = orgData) {
@@ -460,9 +873,11 @@
                 return;
             }
             modalMode = 'add-root';
-            document.getElementById('modalTitle').textContent = 'Add CEO/Root Node';
+            document.getElementById('modalTitle').textContent = '👤 Add CEO/Root Node';
             document.getElementById('nodeName').value = '';
             document.getElementById('nodeRole').value = '';
+            document.getElementById('nodeDepartment').value = '';
+            document.getElementById('nodeEmail').value = '';
             document.getElementById('nodeModal').classList.add('active');
         }
 
@@ -472,9 +887,11 @@
                 return;
             }
             modalMode = 'add-child';
-            document.getElementById('modalTitle').textContent = 'Add Team Member';
+            document.getElementById('modalTitle').textContent = '➕ Add Team Member';
             document.getElementById('nodeName').value = '';
             document.getElementById('nodeRole').value = '';
+            document.getElementById('nodeDepartment').value = '';
+            document.getElementById('nodeEmail').value = '';
             document.getElementById('nodeModal').classList.add('active');
         }
 
@@ -487,9 +904,11 @@
             if (!node) return;
 
             modalMode = 'edit';
-            document.getElementById('modalTitle').textContent = 'Edit Node';
+            document.getElementById('modalTitle').textContent = '✏️ Edit Node';
             document.getElementById('nodeName').value = node.name;
             document.getElementById('nodeRole').value = node.role;
+            document.getElementById('nodeDepartment').value = node.department || '';
+            document.getElementById('nodeEmail').value = node.email || '';
             document.getElementById('nodeModal').classList.add('active');
         }
 
@@ -524,35 +943,42 @@
         function saveNode() {
             const name = document.getElementById('nodeName').value.trim();
             const role = document.getElementById('nodeRole').value.trim();
+            const department = document.getElementById('nodeDepartment').value.trim();
+            const email = document.getElementById('nodeEmail').value.trim();
 
             if (!name || !role) {
-                alert('Please fill in all fields');
+                alert('Please fill in Name and Role fields');
                 return;
             }
 
+            const nodeData = {
+                id: modalMode === 'edit' ? selectedNode : generateNodeId(),
+                name: name,
+                role: role
+            };
+
+            if (department) nodeData.department = department;
+            if (email) nodeData.email = email;
+
             if (modalMode === 'add-root') {
-                orgData = {
-                    id: generateNodeId(),
-                    name: name,
-                    role: role
-                };
+                orgData = nodeData;
             } else if (modalMode === 'add-child') {
                 const parent = findNode(selectedNode);
                 if (parent) {
                     if (!parent.children) {
                         parent.children = [];
                     }
-                    parent.children.push({
-                        id: generateNodeId(),
-                        name: name,
-                        role: role
-                    });
+                    parent.children.push(nodeData);
                 }
             } else if (modalMode === 'edit') {
                 const node = findNode(selectedNode);
                 if (node) {
                     node.name = name;
                     node.role = role;
+                    node.department = department || undefined;
+                    node.email = email || undefined;
+                    if (!department) delete node.department;
+                    if (!email) delete node.email;
                 }
             }
 
@@ -566,7 +992,7 @@
         }
 
         function clearAll() {
-            if (!confirm('Clear the entire org chart?')) {
+            if (!confirm('Clear the entire org chart? This cannot be undone.')) {
                 return;
             }
             orgData = null;
@@ -580,42 +1006,97 @@
         function loadSample() {
             orgData = {
                 id: generateNodeId(),
-                name: "Jane Smith",
-                role: "CEO",
+                name: "Sarah Johnson",
+                role: "Chief Executive Officer",
+                department: "Executive",
                 children: [
                     {
                         id: generateNodeId(),
-                        name: "John Doe",
-                        role: "CTO",
+                        name: "Michael Chen",
+                        role: "Chief Technology Officer",
+                        department: "Technology",
                         children: [
                             {
                                 id: generateNodeId(),
-                                name: "Alice Johnson",
-                                role: "Lead Developer"
+                                name: "Emily Rodriguez",
+                                role: "VP Engineering",
+                                department: "Engineering",
+                                children: [
+                                    {
+                                        id: generateNodeId(),
+                                        name: "David Kim",
+                                        role: "Senior Engineer",
+                                        department: "Engineering"
+                                    },
+                                    {
+                                        id: generateNodeId(),
+                                        name: "Lisa Wang",
+                                        role: "Lead Developer",
+                                        department: "Engineering"
+                                    }
+                                ]
                             },
                             {
                                 id: generateNodeId(),
-                                name: "Bob Wilson",
-                                role: "DevOps Manager"
+                                name: "James Wilson",
+                                role: "VP Product",
+                                department: "Product",
+                                children: [
+                                    {
+                                        id: generateNodeId(),
+                                        name: "Anna Smith",
+                                        role: "Product Manager",
+                                        department: "Product"
+                                    }
+                                ]
                             }
                         ]
                     },
                     {
                         id: generateNodeId(),
-                        name: "Sarah Brown",
-                        role: "CFO",
+                        name: "Robert Taylor",
+                        role: "Chief Financial Officer",
+                        department: "Finance",
                         children: [
                             {
                                 id: generateNodeId(),
-                                name: "Mike Davis",
-                                role: "Accounting Manager"
+                                name: "Jennifer Lee",
+                                role: "VP Finance",
+                                department: "Finance"
+                            },
+                            {
+                                id: generateNodeId(),
+                                name: "Mark Davis",
+                                role: "Controller",
+                                department: "Accounting"
                             }
                         ]
                     },
                     {
                         id: generateNodeId(),
-                        name: "Tom Anderson",
-                        role: "VP Sales"
+                        name: "Amanda Foster",
+                        role: "Chief Marketing Officer",
+                        department: "Marketing",
+                        children: [
+                            {
+                                id: generateNodeId(),
+                                name: "Chris Martinez",
+                                role: "VP Marketing",
+                                department: "Marketing"
+                            },
+                            {
+                                id: generateNodeId(),
+                                name: "Sophie Turner",
+                                role: "Brand Manager",
+                                department: "Marketing"
+                            }
+                        ]
+                    },
+                    {
+                        id: generateNodeId(),
+                        name: "Thomas Anderson",
+                        role: "VP Sales",
+                        department: "Sales"
                     }
                 ]
             };
@@ -650,7 +1131,7 @@
                     orgData = JSON.parse(e.target.result);
                     selectedNode = null;
                     renderChart();
-            saveToStorage();
+                    saveToStorage();
                     alert('Data imported successfully');
                 } catch (error) {
                     alert('Error importing data: Invalid JSON file');
