@@ -1,0 +1,12 @@
+{
+  "name": "org-chart-app",
+  "version": "1.0.0",
+  "description": "Simple org chart builder",
+  "scripts": {
+    "dev": "echo 'Open index.html in your browser'",
+    "build": "echo 'No build needed for static site'"
+  },
+  "keywords": ["org-chart", "organization", "chart", "team"],
+  "author": "",
+  "license": "MIT"
+}
