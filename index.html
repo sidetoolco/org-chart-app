@@ -648,6 +648,9 @@
                 <span>📁</span> Import JSON
             </button>
             <input type="file" id="importFile" style="display: none;" accept=".json" onchange="importData(event)">
+            <button class="primary" onclick="shareChart()">
+                <span>🔗</span> Share Chart
+            </button>
         </div>
 
         <div class="chart-container">
@@ -681,11 +684,36 @@
         </div>
     </div>
 
+    <div id="shareModal" class="modal">
+        <div class="modal-content">
+            <h3>🔗 Share Your Org Chart</h3>
+            <p style="margin-bottom: 20px; color: var(--text-secondary);">Share this link to let others view your organization chart:</p>
+            <div class="form-group">
+                <label for="shareUrl">Shareable Link</label>
+                <div style="display: flex; gap: 10px;">
+                    <input type="text" id="shareUrl" readonly style="flex: 1;">
+                    <button class="secondary" onclick="copyShareLink()" style="white-space: nowrap;">
+                        <span id="copyIcon">📋</span> <span id="copyText">Copy</span>
+                    </button>
+                </div>
+            </div>
+            <div style="margin-top: 16px; padding: 16px; background: #f0f9ff; border-radius: 8px; border: 1px solid #bae6fd;">
+                <p style="font-size: 13px; color: var(--text-secondary); margin: 0;">
+                    <strong>Note:</strong> This link contains your entire org chart data. Anyone with this link can view (but not edit) your chart.
+                </p>
+            </div>
+            <div class="modal-buttons">
+                <button onclick="closeShareModal()">Close</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         let orgData = null;
         let selectedNode = null;
         let modalMode = 'add';
         let nodeIdCounter = 1;
+        let isReadOnlyMode = false;
 
         // Load data from localStorage on page load
         function loadFromStorage() {
@@ -838,6 +866,7 @@
         }
 
         function selectNode(nodeId) {
+            if (isReadOnlyMode) return; // Disable selection in read-only mode
             selectedNode = nodeId;
             renderChart();
         }
@@ -1148,9 +1177,102 @@
             }
         });
 
-        // Load saved data when page loads
-        loadFromStorage();
-        renderChart();
+        // Share functionality
+        function shareChart() {
+            if (!orgData) {
+                alert('No chart to share. Please create an org chart first.');
+                return;
+            }
+
+            const chartData = btoa(encodeURIComponent(JSON.stringify(orgData)));
+            const shareUrl = window.location.origin + window.location.pathname + '?chart=' + chartData;
+
+            document.getElementById('shareUrl').value = shareUrl;
+            document.getElementById('shareModal').classList.add('active');
+        }
+
+        function copyShareLink() {
+            const shareUrl = document.getElementById('shareUrl');
+            shareUrl.select();
+            shareUrl.setSelectionRange(0, 99999); // For mobile devices
+
+            try {
+                document.execCommand('copy');
+                document.getElementById('copyIcon').textContent = '✅';
+                document.getElementById('copyText').textContent = 'Copied!';
+
+                setTimeout(() => {
+                    document.getElementById('copyIcon').textContent = '📋';
+                    document.getElementById('copyText').textContent = 'Copy';
+                }, 2000);
+            } catch (err) {
+                alert('Failed to copy link');
+            }
+        }
+
+        function closeShareModal() {
+            document.getElementById('shareModal').classList.remove('active');
+        }
+
+        // Check for shared chart in URL
+        function checkForSharedChart() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const sharedChart = urlParams.get('chart');
+
+            if (sharedChart) {
+                try {
+                    const decodedData = JSON.parse(decodeURIComponent(atob(sharedChart)));
+                    orgData = decodedData;
+                    isReadOnlyMode = true;
+
+                    // Hide editing controls in read-only mode
+                    const controls = document.querySelector('.controls');
+                    controls.innerHTML = `
+                        <div style="flex: 1; display: flex; align-items: center; gap: 16px;">
+                            <span style="background: #fbbf24; color: #78350f; padding: 8px 16px; border-radius: 8px; font-weight: 500;">
+                                👁️ View-Only Mode
+                            </span>
+                            <span style="color: var(--text-secondary);">This is a shared org chart</span>
+                        </div>
+                        <button class="primary" onclick="createOwnCopy()">
+                            <span>📋</span> Create My Own Copy
+                        </button>
+                        <button onclick="window.location.href = window.location.origin + window.location.pathname">
+                            <span>🏠</span> Go to Builder
+                        </button>
+                    `;
+
+                    // Update header for shared view
+                    document.querySelector('.header h1').textContent = '👁️ Viewing Shared Org Chart';
+                    document.querySelector('.header p').textContent = 'This is a read-only view of a shared organization chart';
+
+                    renderChart();
+                    return true;
+                } catch (err) {
+                    console.error('Failed to load shared chart:', err);
+                    alert('Invalid or corrupted share link');
+                }
+            }
+            return false;
+        }
+
+        function createOwnCopy() {
+            if (!orgData) return;
+
+            // Save current shared data to localStorage
+            localStorage.setItem('orgChartData', JSON.stringify(orgData));
+            localStorage.setItem('orgChartNodeCounter', nodeIdCounter.toString());
+
+            // Redirect to builder mode
+            window.location.href = window.location.origin + window.location.pathname;
+        }
+
+        // Initialize
+        if (!checkForSharedChart()) {
+            // Normal mode - load from localStorage
+            loadFromStorage();
+            renderChart();
+        }
     </script>
 </body>
 </html>
